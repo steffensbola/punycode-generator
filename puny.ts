@@ -89,7 +89,7 @@ homos['ö'] = 'ÖӦ';
   Generate an array of candidate domains using homoglyphs.
   Time and numer of results grow exponentially with the lenght of the input string. 
   Something like O(n^8).
-/*
+*/
 const puny = (domain: string): string[] => {
     let input = domain.split('')
     let output = [domain]
