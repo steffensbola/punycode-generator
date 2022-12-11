@@ -1,16 +1,17 @@
-/* 
+/* eslint-disable dot-notation */
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-extend-native */
+/*
   Homoglyps are characters that resemble each other.
-  Unicode characters can look the same to the naked eye but actually, have a different web address. 
-  Some letters in the Roman alphabet, used by the majority of modern languages, are the same shape as letters in Greek, 
-  Cyrillic, and other alphabets, so it’s easy for an attacker to launch a domain name that replaces some ASCII 
-  characters with Unicode characters.
+  Unicode characters can look the same to the naked eye but actually, have a different web address.
+  Some letters in the Roman alphabet, used by the majority of modern languages, are the same shape
+  as letters in Greek, Cyrillic, and other alphabets, so it’s easy for an attacker to launch a
+  domain name that replaces some ASCII characters with Unicode characters.
 */
-String.prototype.replaceAt = function (pos, ch) {
-    return [this.substr(0, pos), ch, this.substr(pos + 1)].join('');
-};
+const replaceAt = (s:string, pos:number, ch) => [s.substring(0, pos), ch, s.substring(pos + 1)].join('');
 
 /* map for homoglyphs */
-var homos = new Array();
+const homos = new Array();
 homos[' '] = ' ᅟᅠ         　ㅤ';
 homos['!'] = '!ǃ！';
 homos['"'] = '"״″＂';
@@ -87,28 +88,29 @@ homos['ö'] = 'ÖӦ';
 
 /*
   Generate an array of candidate domains using homoglyphs.
-  Time and numer of results grow exponentially with the lenght of the input string. 
+  Time and numer of results grow exponentially with the lenght of the input string.
   Something like O(n^8).
 */
 const puny = (domain: string): string[] => {
-    let input = domain.split('')
-    let output = [domain]
-    index = 0
-    for (const l of input) {
-        console.log(l)
-        let homo = homos[l]
-        let tmpout = output.slice()
-        for (const out of tmpout) {
-            for (const variation of homo ?? []) {
-                output.push(out.replaceAt(index, variation))
-            }
-        }
-        index++
+  const input = domain.split('');
+  const output = [domain];
+  let index = 0;
+  for (const l of input) {
+    const homo = homos[l];
+    const tmpout = output.slice();
+    for (const out of tmpout) {
+      for (const variation of homo ?? []) {
+        output.push(replaceAt(out, index, variation));
+      }
     }
-    return output
-}
+    index += 1;
+  }
+  return output;
+};
 
-# test
-o = puny('ama')
-console.log('output ', o.length, o)
+// test
+let o = puny('amazon'); // 3.415.104 possible variations
+console.log('output ', o.length, o);
 
+o = puny('itau'); // 31.680 possible variations
+console.log('output ', o.length, o);
