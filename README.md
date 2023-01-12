@@ -9,5 +9,5 @@ This technique is called a homograph attack, the URLs will look legitimate, and 
 # Looking for contributors:  
 What for?  
   1. Optimize the performance  
-  2. Extend to include diferent wais to encode the url  
+  2. Extend to include diferent ways to encode the url  
   3. Build a product that can actually check the thousands of possible punycode attacks, verify if the url was registered, check if the website is online, notify the responsibles and so forth. The volume of combinations is absurd. Needs work to become viable.  
