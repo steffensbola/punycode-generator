@@ -8,7 +8,7 @@
   as letters in Greek, Cyrillic, and other alphabets, so it’s easy for an attacker to launch a
   domain name that replaces some ASCII characters with Unicode characters.
 */
-const replaceAt = (s:string, pos:number, ch) => [s.substring(0, pos), ch, s.substring(pos + 1)].join('');
+const replaceAt = (s: string, pos: number, ch: string) => `${s.slice(0, pos)}${ch}${s.slice(pos + 1)}`;
 
 /* map for homoglyphs */
 const homos = new Array();
@@ -88,7 +88,7 @@ homos['ö'] = 'ÖӦ';
 
 /*
   Generate an array of candidate domains using homoglyphs.
-  Time and numer of results grow exponentially with the lenght of the input string.
+  Time and number of results grow exponentially with the lenght of the input string.
   Something like O(n^8).
 */
 const puny = (domain: string): string[] => {
@@ -108,9 +108,34 @@ const puny = (domain: string): string[] => {
   return output;
 };
 
+
+const isPunycodeDomain = (domain: string): boolean => {
+  const input = domain.split('');
+  for (const char of input) {
+    if (!homos[char]?.length) {
+      return true;
+    }
+  }
+  return false;
+};
+
+
 // test
-let o = puny('amazon'); // 3.415.104 possible variations
+let o: string[] = [];
+console.time('punycode-amazon');
+for (let i = 0; i < 10; i++) {
+  o = puny('amazon'); // 3.415.104 possible variations
+}
+console.timeEnd('punycode-amazon');
 console.log('output ', o.length, o);
 
-o = puny('itau'); // 31.680 possible variations
+console.time('punycode-itau');
+o = puny('itau'); // .99ms give or take -- 31.680 possible variations
+console.timeEnd('punycode-itau');
 console.log('output ', o.length, o);
+
+let isPuny = false;
+for(const domain of ["amazon","Àmazon",  "ÀΜazon", "ÀϺazon", "ÀМazon", "ÀᎷazon", "Àᛖazon",  "ÀⅯazon", "Àⅿazon", "ÀＭazon", "Àｍazon", "ÁMazon", "Ámazon"]){
+  isPuny = isPunycodeDomain(domain);
+  console.log(domain, isPuny);
+}
